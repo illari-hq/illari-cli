@@ -1,6 +1,6 @@
 {
   "name": "illari",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "CLI for illari job monitoring: wrap a command and report its start, exit code, duration, and output tail.",
   "type": "module",
   "bin": {
