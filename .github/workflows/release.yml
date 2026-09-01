@@ -24,6 +24,13 @@ jobs:
           tag="${GITHUB_REF_NAME#v}"
           pkg="$(node -p "require('./package.json').version")"
           test "$tag" = "$pkg" || { echo "tag $tag != package.json $pkg"; exit 1; }
-      - run: npm publish --provenance --access public
+      - name: Publish (skip if this version is already on npm)
+        run: |
+          pkg="$(node -p "require('./package.json').version")"
+          if npm view "illari@$pkg" version >/dev/null 2>&1; then
+            echo "illari@$pkg is already published — nothing to do."
+          else
+            npm publish --provenance --access public
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
