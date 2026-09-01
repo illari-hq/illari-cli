@@ -9,6 +9,7 @@ export type PingResult =
 
 export type SendOptions = {
   body?: string | undefined;
+  contentType?: string;
   timeoutMs?: number;
   retries?: number;
   /** injectable for tests */
@@ -39,7 +40,10 @@ export async function sendPing(
         method: "POST",
         signal: ac.signal,
         ...(opts.body != null
-          ? { body: opts.body, headers: { "content-type": "text/plain" } }
+          ? {
+              body: opts.body,
+              headers: { "content-type": opts.contentType ?? "text/plain" },
+            }
           : {}),
       });
       if (res.ok) return { ok: true, status: res.status };

@@ -39,12 +39,27 @@ ILLARI_KEY=abc123 illari run -- /usr/local/bin/backup.sh
 ## illari ping
 
 A one-shot check-in, for a crontab line or a manual test. The optional trailing
-argument is the event suffix: `start`, `fail`, or an exit code.
+argument is the event suffix: `start`, `fail`, or an exit code. `-d k=v` sends
+metrics (illari keeps the numeric ones).
 
 ```bash
 illari ping --key abc123
 illari ping --key abc123 fail
+illari ping --key abc123 -d rows=$(psql -tAc "select count(*) from orders") -d cost_usd=$c
 ILLARI_URL=https://illari.dev/ping/abc123 illari ping
+```
+
+## illari list
+
+Print the account's monitors and their current state. Needs a Management API
+key (`--token` / `ILLARI_TOKEN`, from Settings → API keys).
+
+```bash
+$ ILLARI_TOKEN=illari_... illari list
+NAME             STATUS  LAST CHECK-IN  SCHEDULE
+nightly-etl      up      4m ago         0 2 * * * (America/Chicago)
+weekly-report    late    2h ago         0 9 * * 1 (UTC)
+backup           down    3d ago         no fixed schedule
 ```
 
 ## illari import
