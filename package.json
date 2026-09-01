@@ -1,0 +1,41 @@
+{
+  "name": "illari",
+  "version": "0.1.0",
+  "description": "CLI for illari job monitoring: wrap a command and report its start, exit code, duration, and output tail.",
+  "type": "module",
+  "bin": {
+    "illari": "./dist/src/index.js"
+  },
+  "files": [
+    "dist/src"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test dist/test/*.test.js",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "cron",
+    "monitoring",
+    "healthcheck",
+    "heartbeat",
+    "dead-mans-switch",
+    "illari"
+  ],
+  "license": "MIT",
+  "homepage": "https://illari.dev/docs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/illari-hq/illari-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/illari-hq/illari-cli/issues"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "typescript": "^5.6.0"
+  }
+}
