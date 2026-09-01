@@ -1,5 +1,7 @@
 # illari CLI
 
+[![npm version](https://img.shields.io/npm/v/illari.svg)](https://www.npmjs.com/package/illari)
+
 Wrap a scheduled job so [illari](https://illari.dev) sees its start, exit code,
 duration, and output, without editing the script.
 
@@ -7,6 +9,9 @@ duration, and output, without editing the script.
 npm install -g illari
 # or: npx illari run -- ./job.sh
 ```
+
+Package page: <https://www.npmjs.com/package/illari>. Release notes are the
+[GitHub releases](https://github.com/illari-hq/illari-cli/releases).
 
 ## illari run
 
@@ -104,7 +109,8 @@ npm test        # tsc build + node --test
 ```
 
 Source is TypeScript in `src/`, tests in `test/`. The published package is the
-compiled `dist/src` only. Releases go out from a `vX.Y.Z` tag (see
+compiled `dist/src` only. Pushing a `vX.Y.Z` tag (matching `package.json`)
+publishes to npm and opens a matching GitHub release, both idempotent (see
 `.github/workflows/release.yml`).
 
 MIT licensed.

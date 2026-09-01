@@ -8,7 +8,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write # create the GitHub release
       id-token: write # npm provenance
     steps:
       - uses: actions/checkout@v4
@@ -34,3 +34,16 @@ jobs:
           fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Create the GitHub release (skip if it already exists)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          pkg="$(node -p "require('./package.json').version")"
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            echo "release $GITHUB_REF_NAME already exists — nothing to do."
+          else
+            gh release create "$GITHUB_REF_NAME" \
+              --title "$GITHUB_REF_NAME" \
+              --generate-notes \
+              --notes "npm: https://www.npmjs.com/package/illari/v/$pkg"
+          fi
