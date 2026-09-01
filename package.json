@@ -4,7 +4,7 @@
   "description": "CLI for illari job monitoring: wrap a command and report its start, exit code, duration, and output tail.",
   "type": "module",
   "bin": {
-    "illari": "./dist/src/index.js"
+    "illari": "dist/src/index.js"
   },
   "files": [
     "dist/src"
