@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { createRequire } from "node:module";
+import { importCrontab } from "./import.js";
 import { ping } from "./ping.js";
 import { UsageError } from "./resolve.js";
 import { run } from "./run.js";
@@ -13,6 +14,7 @@ const HELP = `illari ${version} — wrap a job and report to illari.dev
 USAGE
   illari run [options] -- <command> [args...]
   illari ping [--key K | --url U] [--base B] [start | <exit> | fail]
+  illari import [--token T] [--tz TZ] [--prefix P] [--dry-run] [crontab-file]
 
 RUN OPTIONS
   --key <key>     monitor ping key            (or ILLARI_KEY)
@@ -21,15 +23,26 @@ RUN OPTIONS
   --tail <bytes>  output kept for the completion body (default 10000, 0 to disable)
   --no-start      skip the /start ping
 
+IMPORT OPTIONS
+  --token <key>   Management API key illari_...  (or ILLARI_TOKEN; from Settings)
+  --api <url>     API base                       (or ILLARI_API; default https://illari.dev/api/v1)
+  --tz <zone>     timezone for lines with no CRON_TZ/TZ  (default UTC)
+  --prefix <str>  prepended to every monitor name
+  --dry-run, -n   parse and print, create nothing
+
 BEHAVIOUR
-  Sends <ping>/start, runs the command with stdio passed through, then sends
-  <ping>/<exit code> with the last --tail bytes of output as the body. Exits
-  with the command's own exit code. Ping failures are warnings, never fatal.
+  run     Sends <ping>/start, runs the command with stdio passed through, then
+          sends <ping>/<exit code> with the last --tail bytes of output as the
+          body. Exits with the command's own code. Ping failures are warnings.
+  import  Reads a crontab (a file, stdin, or \`crontab -l\`) and creates one
+          monitor per scheduled line, printing each monitor's ping key.
 
 EXAMPLES
   illari run --key abc123 -- ./nightly-etl.sh
   ILLARI_KEY=abc123 illari run -- pg_dump mydb | gzip > dump.sql.gz
-  illari ping --key abc123            # bare check-in from a crontab line
+  illari ping --key abc123                     # bare check-in from a crontab line
+  illari import --dry-run                       # preview monitors from your crontab
+  crontab -l | illari import --token illari_... --tz America/Chicago
 `;
 
 async function main(): Promise<number> {
@@ -45,12 +58,7 @@ async function main(): Promise<number> {
   }
   if (cmd === "run") return run(rest);
   if (cmd === "ping") return ping(rest);
-  if (cmd === "import") {
-    process.stderr.write(
-      "illari: `import` (read a crontab, create monitors) is not built yet.\n",
-    );
-    return 2;
-  }
+  if (cmd === "import") return importCrontab(rest);
 
   process.stderr.write(`illari: unknown command "${cmd}". Try \`illari --help\`.\n`);
   return 2;

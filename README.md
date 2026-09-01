@@ -47,10 +47,37 @@ illari ping --key abc123 fail
 ILLARI_URL=https://illari.dev/ping/abc123 illari ping
 ```
 
+## illari import
+
+Read a crontab (a file, stdin, or `crontab -l`) and create one monitor per
+scheduled line via the [Management API](https://illari.dev/docs/api). Prints
+each monitor's ping key so you can wire the jobs up.
+
+```bash
+# preview first — no monitors created
+illari import --dry-run
+
+# create them (token from Settings -> API keys)
+crontab -l | illari import --token illari_... --tz America/Chicago
+```
+
+Handles `CRON_TZ` / `TZ` scoping and the `@daily` family (expanded to 5-field
+cron). Skips `@reboot`, comments, and env lines. Assumes the user-crontab
+format (5 time fields + command), not the system `/etc/cron.d` form with a
+username field. Monitor names are guessed from the command; review the dry run
+and rename in the dashboard as needed.
+
+| Option | Env | Default | |
+|---|---|---|---|
+| `--token <key>` | `ILLARI_TOKEN` | | Management API key `illari_...` |
+| `--api <url>` | `ILLARI_API` | `https://illari.dev/api/v1` | API base |
+| `--tz <zone>` | | `UTC` | timezone for lines without `CRON_TZ`/`TZ` |
+| `--prefix <str>` | | | prepended to every monitor name |
+| `--dry-run`, `-n` | | | parse and print, create nothing |
+
 ## Notes
 
 - Node 18 or newer. No runtime dependencies.
-- `illari import` (read a crontab, create monitors) is planned, not built yet.
 
 Docs: <https://illari.dev/docs>
 
