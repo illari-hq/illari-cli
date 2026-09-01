@@ -105,7 +105,7 @@ Docs: <https://illari.dev/docs>
 
 ```bash
 npm install
-npm test        # tsc build + node --test
+npm test        # tsc build, then run each dist/test/*.test.js file
 ```
 
 Source is TypeScript in `src/`, tests in `test/`. The published package is the
